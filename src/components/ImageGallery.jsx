@@ -3,13 +3,11 @@ import ImageGalleryItem from './ImageGalleryItem';
 import Button from './Button';
 import { MagnifyingGlass } from 'react-loader-spinner';
 import { getImagesWithQuery } from './Api';
-import axios from 'axios';
-import css from './styles.module.css';
 
-axios.defaults.baseURL = 'https://pixabay.com/api/';
+import css from './styles.module.css';
+import Modal from './Modal';
 
 class ImageGallery extends Component {
-
   state = {
     images: [],
     isLoading: false,
@@ -17,6 +15,11 @@ class ImageGallery extends Component {
     page: 1,
     search: '',
     emptyResponse: false,
+    selectedImage: null,
+  };
+
+  handleImageClick = largeImageURL => {
+    this.setState({ selectedImage: largeImageURL });
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -45,74 +48,19 @@ class ImageGallery extends Component {
       this.setState({ search: this.props.search });
 
       try {
-        const images = await getImagesWithQuery(this.props.search, this.state.page);
+        const images = await getImagesWithQuery(
+          this.props.search,
+          this.state.page
+        );
         this.setState({ images });
       } catch (error) {
         this.setState({ error });
-        // this.setState({ page: 1 });
         alert("We're sorry, but you've reached the end of search results.");
       } finally {
         this.setState({ isLoading: false });
       }
     }
   }
-  
-  // state = {
-  //   images: [],
-  //   isLoading: false,
-  //   error: null,
-  //   search: null,
-  //   emptyResponce: false,
-  //   page: 1,
-  // };
-
-  // async componentDidUpdate(prevProps, prevState) {
-  //   const KEY = '34611977-1c6ac37fcf885911789ad5cb9';
-
-  //   if (prevProps.search !== this.props.search) {
-  //     this.setState({ isLoading: true });
-  //     this.setState({ search: this.props.search });
-  //     this.setState({ page: 1 });
-  //     this.setState({ error: null });
-
-  //     try {       
-
-  //       const response = await axios.get(
-  //         `/?q=${this.props.search}&page=${this.state.page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
-  //       );
-  //       this.setState({
-  //         images: response.data.hits,
-  //         emptyResponce: !response.data.hits.length,
-  //       });
-  //     } catch (error) {
-  //       this.setState({ error });
-  //       alert(`Whoops, something went wrong: ${error.message}`);
-  //     } finally {
-  //       this.setState({ isLoading: false });
-  //       console.log(this.state.images);
-  //     }
-  //   }
-
-  //   if (prevState.page !== this.state.page) {
-  //     this.setState({ isLoading: true });
-  //     this.setState({ search: this.props.search });
-
-  //     try {
-  //       const response = await axios.get(
-  //         `/?q=${this.props.search}&page=${this.state.page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
-  //       );
-  //       this.setState({
-  //         images: response.data.hits,
-  //       });
-  //     } catch (error) {
-  //       this.setState({ error });
-  //       this.setState({ page: 1 });
-  //       alert("We're sorry, but you've reached the end of search results.");
-  //     } finally {
-  //       this.setState({ isLoading: false });
-  //     }
-  //   }
-  // }
 
   changePage = () => {
     if (this.state.images.length === 12) {
@@ -123,7 +71,8 @@ class ImageGallery extends Component {
   };
 
   render() {
-    const { images, isLoading, error, emptyResponce } = this.state;
+    const { images, isLoading, error, emptyResponce, selectedImage } =
+      this.state;
 
     return (
       <div>
@@ -131,7 +80,12 @@ class ImageGallery extends Component {
           {isLoading && <MagnifyingGlass />}
           {emptyResponce && <p>Ничего не найдено</p>}
 
-          {images.length > 0 && <ImageGalleryItem images={images} />}
+          {images.length > 0 && (
+            <ImageGalleryItem
+              images={images}
+              onImageClick={this.handleImageClick}
+            />
+          )}
         </ul>
 
         <div className={css.ButtonConteiner}>
@@ -139,6 +93,11 @@ class ImageGallery extends Component {
             <Button changePage={this.changePage} />
           )}
         </div>
+        {selectedImage && (
+          <Modal onClose={() => this.setState({ selectedImage: null })}>
+            <img src={selectedImage} alt="" />
+          </Modal>
+        )}
       </div>
     );
   }
