@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import css from './styles.module.css';
-// import { toast } from 'react-toastify';
 import { ImSearch } from 'react-icons/im';
-// import css from './Contacts.module.css';
 
 class Searchbar extends Component {
   state = {
@@ -16,7 +14,7 @@ class Searchbar extends Component {
   handlSubmit = event => {
     event.preventDefault();
     if (this.state.search.trim() === '') {
-      alert("Введите запрос");
+      alert('Введите запрос');
       return;
     }
 
@@ -25,7 +23,6 @@ class Searchbar extends Component {
   };
 
   render() {
-    // console.log(this.state.search)
     return (
       <header className={css.Searchbar}>
         <form onSubmit={this.handlSubmit} className={css.SearchForm}>

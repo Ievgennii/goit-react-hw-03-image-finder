@@ -3,7 +3,6 @@ import ImageGalleryItem from './ImageGalleryItem';
 import Button from './Button';
 import { MagnifyingGlass } from 'react-loader-spinner';
 import { getImagesWithQuery } from './Api';
-
 import css from './styles.module.css';
 import Modal from './Modal';
 
@@ -46,6 +45,9 @@ class ImageGallery extends Component {
     if (prevState.page !== this.state.page) {
       this.setState({ isLoading: true });
       this.setState({ search: this.props.search });
+      if(this.state.images.length < 12) {
+        alert("We're sorry, but you've reached the end of search results.");
+      }
 
       try {
         const images = await getImagesWithQuery(
@@ -58,6 +60,7 @@ class ImageGallery extends Component {
         alert("We're sorry, but you've reached the end of search results.");
       } finally {
         this.setState({ isLoading: false });
+        
       }
     }
   }
@@ -79,7 +82,7 @@ class ImageGallery extends Component {
         <ul className={css.ImageGallery}>
           {isLoading && <MagnifyingGlass />}
           {emptyResponce && <p>Ничего не найдено</p>}
-
+          {/* {images.length > 0 && images.length < 12 && <p>Ничего не найдено</p>} */}
           {images.length > 0 && (
             <ImageGalleryItem
               images={images}
@@ -87,11 +90,12 @@ class ImageGallery extends Component {
             />
           )}
         </ul>
-
         <div className={css.ButtonConteiner}>
           {!error && images.length === 12 && (
             <Button changePage={this.changePage} />
           )}
+        
+
         </div>
         {selectedImage && (
           <Modal onClose={() => this.setState({ selectedImage: null })}>
