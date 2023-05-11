@@ -17,9 +17,7 @@ class ImageGallery extends Component {
     selectedImage: null,
   };
 
-  handleImageClick = largeImageURL => {
-    this.setState({ selectedImage: largeImageURL });
-  };
+  
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.search !== this.props.search) {
@@ -63,6 +61,11 @@ class ImageGallery extends Component {
         
       }
     }
+
+    // if (!prevState.emptyResponse) {
+    //   alert("We're sorry, but we didn't find anything for your request.");
+    //   // this.setState({emptyResponse: this.state.emptyResponse})
+    // }
   }
 
   changePage = () => {
@@ -73,6 +76,10 @@ class ImageGallery extends Component {
     }
   };
 
+  handleImageClick = largeImageURL => {
+    this.setState({ selectedImage: largeImageURL });
+  };
+
   render() {
     const { images, isLoading, error, emptyResponce, selectedImage } =
       this.state;
@@ -81,7 +88,7 @@ class ImageGallery extends Component {
       <div>
         <ul className={css.ImageGallery}>
           {isLoading && <MagnifyingGlass />}
-          {emptyResponce && <p>Ничего не найдено</p>}
+          {emptyResponce && <p>We're sorry, but we didn't find anything for your request.</p>}
           {/* {images.length > 0 && images.length < 12 && <p>Ничего не найдено</p>} */}
           {images.length > 0 && (
             <ImageGalleryItem
