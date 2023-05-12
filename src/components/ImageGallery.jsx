@@ -15,6 +15,7 @@ class ImageGallery extends Component {
     search: '',
     emptyResponse: false,
     selectedImage: null,
+    totalHits: null
   };
 
   
@@ -28,10 +29,19 @@ class ImageGallery extends Component {
 
       try {
         const images = await getImagesWithQuery(this.props.search, 1);
+        // this.setState(prevState => ({
+        //   images: [...prevState.images, images.hits]          
+        // }));
         this.setState({
-          images: images,
-          emptyResponce: !images.length,
+          images: images.hits,
+          emptyResponce: !images.hits.length,
         });
+        this.setState({
+          totalHits:images.totalHits
+        });
+
+        console.log(images.totalHits)
+        console.log(images.hits)
       } catch (error) {
         this.setState({ error });
         alert(`Whoops, something went wrong: ${error.message}`);
@@ -49,7 +59,17 @@ class ImageGallery extends Component {
           this.props.search,
           this.state.page
         );
-        this.setState({ images });
+        this.setState(prevState => ({
+          images: [...prevState.images, ...images.hits]          
+        }));
+
+        this.setState(prevState => ({
+          totalHits: prevState.totalHits - 12,
+        }));
+if (this.state.totalHits < 24){alert("We're sorry, but you've reached the end of search results.");}
+        console.log(this.state.images);
+        console.log(this.state.totalHits);
+        // this.setState({ images: images.hits });
       } catch (error) {
         this.setState({ error });
         alert("We're sorry, but you've reached the end of search results.");
@@ -77,7 +97,7 @@ class ImageGallery extends Component {
   };
 
   render() {
-    const { images, isLoading, error, emptyResponce, selectedImage } =
+    const { images, isLoading, error, emptyResponce, selectedImage, totalHits } =
       this.state;
 
     return (
@@ -94,7 +114,7 @@ class ImageGallery extends Component {
           )}
         </ul>
         <div className={css.ButtonConteiner}>
-          {!error && images.length > 0 && (
+          {!error && totalHits > 12 && (
             <Button changePage={this.changePage} />
           )}
         
