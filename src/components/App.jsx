@@ -9,11 +9,13 @@ class App extends Component {
   state = {
     search: '',
     showModal: false,
+    // images: [],
+    // page: 1,
     
   };
 
   handleSearchSubmit = search => {
-    this.setState({ search: search });
+    this.setState({ search: search, images: [], page: 1 });
   };
 
   
@@ -24,7 +26,7 @@ class App extends Component {
         <Searchbar onSubmit={this.handleSearchSubmit} />
         
         <ImageGallery
-  search={search}
+  search={search} 
   
 />
       </div>

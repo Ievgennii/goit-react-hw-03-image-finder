@@ -48,7 +48,7 @@ class ImageGallery extends Component {
       }
     }
 
-    if (prevState.page !== this.state.page) {
+    if (prevState.page !== this.state.page && this.state.page !== 1) {
       this.setState({ isLoading: true });
       this.setState({ search: this.props.search });
 
